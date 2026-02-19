@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Neha!</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <!-- Audio Element -->
+    <audio id="birthdayAudio" loop>
+        <!-- User's file seems to have double extension based on list_dir -->
+        <source src="aud.mp3.mpeg" type="audio/mpeg">
+        <!-- Fallback just in case -->
+        <source src="aud.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Background Elements -->
+    <div class="bg-decorations"></div>
+
+    <!-- Floating Memories Container (Hidden initially) -->
+    <div class="memories-container" id="memories-container"></div>
+
+    <!-- Screen 1: Initial Question -->
+    <div id="screen-initial" class="screen active">
+        <div class="content">
+            <h1 class="animate-text">Hey Neha! 💕</h1>
+            <p class="animate-text delay-1">There is something special for you...</p>
+            <div class="decorations">
+                <span class="emoji floating">❤️</span>
+                <span class="emoji floating delay-2">✨</span>
+                <span class="emoji floating delay-1">😊</span>
+            </div>
+            <p class="animate-text delay-2">Do you want to see it?</p>
+            <div class="buttons-container">
+                <button class="btn-yes" onclick="startCelebration()">Yes! 😍</button>
+                <div class="no-btn-wrapper">
+                    <button id="btn-no" class="btn-no">No 😢</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 2: Celebration (Cake & Confetti) -->
+    <div id="screen-celebration" class="screen">
+        <canvas id="confetti-canvas"></canvas>
+        <div class="celebration-content">
+            <!-- Party Poppers -->
+            <div class="poppers start">🎉</div>
+            <div class="poppers end">🎉</div>
+
+            <h1 class="bday-text">
+                <span class="letter-h-cap">H</span>happy Birthday Neha ji !
+            </h1>
+
+            <div class="center-stage">
+                <!-- Baby Image with Cap -->
+                <div class="baby-container">
+                    <div class="baby-frame">
+                        <img src="baby.jpeg" alt="Cute Baby" class="baby-img">
+                        <div class="baby-cap">🎀</div>
+                    </div>
+                </div>
+
+                <!-- Interactive Card Trigger -->
+                <div id="card-trigger" class="card-trigger" onclick="openFullCard()">
+                    <div class="envelope">
+                        <div class="flap"></div>
+                        <div class="pocket"></div>
+                        <div class="letter"></div>
+                    </div>
+                    <p class="click-hint">Click Me!</p>
+                </div>
+
+                <!-- 3D CSS Cake -->
+                <div class="cake-container">
+                    <div class="cake-3d">
+                        <div class="plate"></div>
+                        <div class="layer layer-bottom"></div>
+                        <div class="layer layer-middle"></div>
+                        <div class="layer layer-top"></div>
+                        <div class="icing"></div>
+                        <div class="cherry c1">🍒</div>
+                        <div class="cherry c2">🍒</div>
+                        <div class="cherry c3">🍒</div>
+                        <div class="candle">
+                            <div class="flame"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3D Card Container -->
+        <div class="card-container">
+            <div class="card-3d">
+                <div class="card-front">
+                    <div class="front-content">
+                        <h2>For You...</h2>
+                        <span class="heart-icon">❤️</span>
+                    </div>
+                </div>
+                <div class="card-inside">
+                    <div class="inside-content">
+                        <h2>Happy Birthday, Neha! 🎉🎂✨</h2>
+                        <div class="scrollable-text">
+                            <p>It’s really a joy to talk to you. Honestly, I still don’t know how you found me or what
+                                was in your mind at that time 😄 but I’m truly thankful you did.</p>
+                            <p>After you came into my life, there has been such a huge change — especially my WhatsApp
+                                and Instagram screen time increasing day by day! 😜 Now that has also become normal
+                                because you are getting busy with your exams, tests, etc. And I don’t want to waste your
+                                time.</p>
+                            <p>I wish I could give you some gift, but you already have all the things. All the best for
+                                your happy and joyful year.</p>
+                            <p>Don’t think too much… it’s not a “something something” 😅<br>And I know you don’t need
+                                anyone like me for something something.</p>
+                            <p>On your special day, I just want to wish you unlimited happiness, success in everything
+                                you dream about, and lots of positive vibes. May this year bring you new opportunities,
+                                beautiful surprises, and memories that make you smile forever. 💫</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

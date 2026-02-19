@@ -1,0 +1,744 @@
+:root {
+    --primary-color: #ff6b81;
+    --secondary-color: #ff9a9e;
+    --accent-color: #ff4757;
+    --bg-color: #fce4ec;
+    --text-color: #4a4a4a;
+    --font-script: 'Dancing Script', cursive;
+    --font-body: 'Poppins', sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    /* Prevent scrolling */
+    background: linear-gradient(135deg, #fff0f3 0%, #ffe6e9 100%);
+    font-family: var(--font-body);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    perspective: 1000px;
+}
+
+/* --- Floating Memories --- */
+.memories-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 15;
+    display: none;
+}
+
+.memory-wrapper {
+    position: absolute;
+    width: 150px;
+    /* Increased Size */
+    height: 150px;
+    animation: floatUp infinite linear;
+    pointer-events: auto;
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.2));
+    transition: transform 0.3s ease;
+    will-change: transform;
+}
+
+.memory-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>');
+    mask-size: cover;
+    mask-repeat: no-repeat;
+    -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>');
+    -webkit-mask-size: cover;
+}
+
+.memory-wrapper:hover,
+.memory-wrapper.paused {
+    animation-play-state: paused;
+    transform: scale(1.2);
+    z-index: 100;
+}
+
+/* --- Screens & Transitions --- */
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    /* Hidden by default */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+}
+
+.screen.active {
+    display: flex;
+    opacity: 1;
+    z-index: 10;
+}
+
+/* --- Initial Screen --- */
+.content {
+    z-index: 20;
+    padding: 20px;
+}
+
+.content h1 {
+    font-family: var(--font-script);
+    font-size: 3.5rem;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.decorations .emoji {
+    font-size: 2rem;
+    position: absolute;
+    animation: float 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.decorations .emoji:nth-child(1) {
+    top: 20%;
+    left: 20%;
+    animation-delay: 0s;
+}
+
+.decorations .emoji:nth-child(2) {
+    top: 15%;
+    right: 25%;
+    animation-delay: 1s;
+}
+
+.decorations .emoji:nth-child(3) {
+    bottom: 25%;
+    left: 30%;
+    animation-delay: 2s;
+}
+
+.buttons-container {
+    margin-top: 30px;
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    height: 60px;
+    /* Preserve height */
+}
+
+.btn-yes {
+    padding: 12px 35px;
+    font-size: 1.3rem;
+    border: none;
+    border-radius: 50px;
+    background: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 107, 129, 0.4);
+    z-index: 20;
+    transition: transform 0.2s, background 0.3s;
+}
+
+.btn-yes:hover {
+    background: var(--accent-color);
+    transform: scale(1.05);
+}
+
+.no-btn-wrapper {
+    position: relative;
+    width: 100px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-no {
+    padding: 12px 30px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 50px;
+    background: #bdc3c7;
+    color: white;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.4s ease-out;
+    white-space: nowrap;
+}
+
+.btn-no.moving {
+    position: fixed;
+    z-index: 100;
+}
+
+/* --- Celebration Layout --- */
+.celebration-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 1000px;
+    transition: transform 1s ease;
+}
+
+.bday-text {
+    font-family: var(--font-script);
+    font-size: 3.5rem;
+    color: var(--accent-color);
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 20;
+    text-align: center;
+    padding: 0 20px;
+}
+
+.center-stage {
+    display: flex;
+    align-items: flex-end;
+    /* Align bottom */
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    /* Fix distortion on small screens */
+    position: relative;
+}
+
+/* --- Interactive Trigger --- */
+.card-trigger {
+    width: 100px;
+    height: 80px;
+    /* Envelope shape */
+    cursor: pointer;
+    position: relative;
+    display: none;
+    /* Hidden initially */
+    animation: float 3s infinite ease-in-out;
+    margin-left: 20px;
+    z-index: 25;
+}
+
+.envelope {
+    width: 100%;
+    height: 100%;
+    background: #ff9a9e;
+    position: relative;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 50px solid transparent;
+    border-right: 50px solid transparent;
+    border-top: 60px solid #ffb7b2;
+    /* Darker pink */
+    transform-origin: top;
+    z-index: 3;
+}
+
+@keyframes innerFloat {
+    0% {
+        transform: translateY(0);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 0.6;
+    }
+
+    100% {
+        transform: translateY(-300px);
+        opacity: 0;
+    }
+}
+
+/* Ensure text is above decorations */
+.scrollable-text,
+.inside-content h2 {
+    position: relative;
+    z-index: 2;
+}
+
+.pocket {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 50px solid #ffc3cf;
+    border-right: 50px solid #ffc3cf;
+    border-bottom: 50px solid #ff808b;
+    z-index: 2;
+}
+
+.letter {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 80px;
+    height: 60px;
+    background: #fff;
+    z-index: 1;
+    border-radius: 2px;
+}
+
+.click-hint {
+    position: absolute;
+    bottom: -30px;
+    width: 100%;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--accent-color);
+    font-weight: bold;
+    animation: bounce 1s infinite alternate;
+}
+
+.card-trigger:hover {
+    transform: scale(1.1);
+}
+
+/* Baby Image */
+.baby-container {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    animation: bounce 3s infinite ease-in-out;
+    flex-shrink: 0;
+}
+
+.baby-frame {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 6px solid #fff;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    background: white;
+    position: relative;
+}
+
+.baby-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.baby-cap {
+    position: absolute;
+    top: -25px;
+    left: 45%;
+    transform: rotate(0deg);
+    /* Ribbon sits better straight or slightly tilted */
+    font-size: 4.5rem;
+    z-index: 15;
+    filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.3));
+    animation: bounce 2s infinite;
+    /* Gentle bounce instead of flicker */
+}
+
+/* 3D Cake */
+.cake-container {
+    position: relative;
+    width: 240px;
+    height: 200px;
+    flex-shrink: 0;
+    perspective: none;
+    /* Internal 3d handled by cake-3d */
+}
+
+.cake-3d {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+}
+
+/* Cake Layers & Decorations */
+.plate {
+    width: 260px;
+    height: 14px;
+    background: #e0e0e0;
+    border-radius: 50%;
+    position: absolute;
+    bottom: -10px;
+    left: -10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.layer {
+    width: 100%;
+    position: absolute;
+    border-radius: 10px;
+}
+
+.layer-bottom {
+    height: 60px;
+    background: #ff9a9e;
+    bottom: 0;
+    width: 100%;
+}
+
+.layer-middle {
+    height: 60px;
+    background: #ffc3cf;
+    bottom: 50px;
+    width: 90%;
+    left: 5%;
+}
+
+.layer-top {
+    height: 60px;
+    background: #ffd1dc;
+    bottom: 100px;
+    width: 80%;
+    left: 10%;
+}
+
+.icing {
+    position: absolute;
+    top: 40px;
+    /* on top layer */
+    left: 10%;
+    width: 80%;
+    height: 25px;
+    background: repeating-linear-gradient(45deg, #fff, #fff 10px, #fff5f7 10px, #fff5f7 20px);
+    border-radius: 15px;
+    z-index: 2;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+    animation: drip 3s infinite ease-in-out;
+}
+
+/* More engaging cake - Sparkles */
+.cake-3d::after {
+    content: '✨';
+    position: absolute;
+    top: 10%;
+    left: 80%;
+    font-size: 1.5rem;
+    animation: sparkle 1.5s infinite;
+}
+
+.cake-3d::before {
+    content: '✨';
+    position: absolute;
+    top: 20%;
+    left: 20%;
+    font-size: 1rem;
+    animation: sparkle 2s infinite;
+    animation-delay: 0.5s;
+}
+
+@keyframes drip {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(3px);
+    }
+}
+
+@keyframes sparkle {
+
+    0%,
+    100% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+.cherry {
+    position: absolute;
+    font-size: 1.8rem;
+    z-index: 5;
+    animation: bounce 3s infinite;
+}
+
+.c1 {
+    top: 25px;
+    left: 15%;
+}
+
+.c2 {
+    top: 20px;
+    left: 45%;
+    animation-delay: 0.5s;
+}
+
+.c3 {
+    top: 25px;
+    right: 15%;
+    animation-delay: 1s;
+}
+
+.candle {
+    width: 14px;
+    height: 50px;
+    background: repeating-linear-gradient(45deg, #ff6b81, #ff6b81 5px, #fff 5px, #fff 10px);
+    position: absolute;
+    bottom: 140px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    border-radius: 4px;
+}
+
+.flame {
+    width: 14px;
+    height: 22px;
+    background: #ffaa00;
+    border-radius: 50% 50% 20% 20%;
+    position: absolute;
+    top: -22px;
+    left: 0px;
+    animation: flicker 0.4s infinite alternate;
+    box-shadow: 0 0 15px #ffaa00;
+}
+
+/* --- 3D Card --- */
+.card-container {
+    perspective: 1500px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 340px;
+    height: 500px;
+    z-index: 30;
+    display: none;
+}
+
+.card-3d {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 1.2s cubic-bezier(0.4, 0.2, 0.2, 1);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+}
+
+.card-3d.open {
+    transform: rotateY(-180deg);
+}
+
+.card-front,
+.card-inside {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.card-front {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fae1dd 100%);
+    color: white;
+    z-index: 2;
+    border: 2px solid #fff;
+}
+
+.card-inside {
+    background: #fff;
+    transform: rotateY(180deg);
+    color: #333;
+    padding: 25px;
+    box-sizing: border-box;
+    text-align: left;
+    border: 5px solid #ffc3cf;
+}
+
+.inside-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* Key change: Prevents anything from going outside */
+}
+
+.inside-content h2 {
+    font-family: var(--font-script);
+    color: var(--primary-color);
+    font-size: 1.8rem;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    text-align: center;
+    flex-shrink: 0;
+    /* Header won't shrink */
+}
+
+.scrollable-text {
+    flex: 1;
+    /* Takes exactly the remaining space */
+    overflow-y: auto;
+    /* Enables scrolling inside this area */
+    padding-right: 5px;
+    margin-bottom: 5px;
+}
+
+.scrollable-text p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    color: #555;
+}
+
+/* Scrollbar styling */
+.scrollable-text::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scrollable-text::-webkit-scrollbar-thumb {
+    background: #ff9a9e;
+    border-radius: 3px;
+}
+
+/* Animations */
+@keyframes floatUp {
+    0% {
+        transform: translateY(110vh) rotate(0deg) scale(0.8);
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-10vh) rotate(20deg) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes flicker {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Dynamic Background */
+.bg-decorations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.floating-item {
+    position: absolute;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+/* Responsiveness Check */
+@media (max-width: 600px) {
+    .content h1 {
+        font-size: 2.2rem;
+    }
+
+    /* Stack elements properly */
+    .center-stage {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        transform: scale(0.85);
+        margin-bottom: 10px;
+    }
+
+    .bday-text {
+        font-size: 2rem;
+        margin-bottom: 5px;
+    }
+
+    .card-container {
+        width: 90%;
+        height: 70vh;
+        /* Increased height for mobile */
+        max-height: 600px;
+    }
+
+    .card-inside {
+        padding: 15px;
+        /* Reduce padding on mobile */
+    }
+
+    .scrollable-text {
+        height: auto;
+        flex: 1;
+        /* Take remaining space */
+        max-height: 100%;
+        /* Ensure it fits */
+    }
+
+    .baby-container {
+        width: 130px;
+        height: 130px;
+    }
+
+    /* Ribbon adjustment for mobile */
+    .baby-cap {
+        font-size: 3.5rem;
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%) rotate(0deg);
+    }
+
+    /* When card is active, hide celebration content more aggressively */
+    body.card-view .celebration-content {
+        opacity: 0.2;
+        transform: scale(0.8);
+        filter: blur(2px);
+    }
+}
